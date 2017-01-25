@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragParade"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e8e6e7">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/one"
+        android:id="@+id/parade_image" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parade_image"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/welcome"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:background="@color/raf_blue"
+        android:gravity="center"
+        android:textColor="@color/raf_gold"
+        android:visibility="gone"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/welcome"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:paddingTop="20dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/next_parade"
+                    android:id="@+id/imageView"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingRight="20dp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp">
+
+                    <TextView
+                        android:text="Next Parade Date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/linearLayout"
+                        android:layout_alignParentStart="true"
+                        android:id="@+id/textView2"
+                        android:layout_weight="1"
+                        android:paddingLeft="15dp"
+                        android:textColor="#444444" />
+
+                    <TextView
+                        android:text="Loading. . ."
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/date"
+                        android:layout_weight="1"
+                        android:textColor="#444444"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:textColor="#444444">
+
+                    <TextView
+                        android:text="Typhoon Flight:"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/linearLayout"
+                        android:layout_alignParentStart="true"
+                        android:id="@+id/textView4"
+                        android:layout_weight="1"
+                        android:paddingLeft="15dp"
+                        android:textColor="#444444"/>
+
+                    <TextView
+                        android:text="Loading. . ."
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/typhoon"
+                        android:layout_weight="1"
+                        android:textColor="#444444"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:textColor="#444444">
+
+                    <TextView
+                        android:text="Tornado Flight:"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/linearLayout"
+                        android:layout_alignParentStart="true"
+                        android:id="@+id/textView5"
+                        android:layout_weight="1"
+                        android:paddingLeft="15dp"
+                        android:textColor="#444444"/>
+
+                    <TextView
+                        android:text="Loading. . ."
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tornado"
+                        android:layout_weight="1"
+                        android:textColor="#444444"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp">
+
+                    <TextView
+                        android:text="Hawk Flight:"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/linearLayout"
+                        android:layout_alignParentStart="true"
+                        android:id="@+id/textView6"
+                        android:layout_weight="1"
+                        android:paddingLeft="15dp"
+                        android:textColor="#444444"/>
+
+                    <TextView
+                        android:text="Loading. . ."
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/hawk"
+                        android:layout_weight="1"
+                        android:textColor="#444444"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp">
+
+                    <TextView
+                        android:text="Tucano Flight:"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/linearLayout"
+                        android:layout_alignParentStart="true"
+                        android:id="@+id/textView7"
+                        android:layout_weight="1"
+                        android:paddingLeft="15dp"
+                        android:textColor="#444444"/>
+
+                    <TextView
+                        android:text="Loading. . ."
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tucano"
+                        android:layout_weight="1"
+                        android:textColor="#444444"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp">
+
+                    <TextView
+                        android:text="Duty NCO:"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/linearLayout"
+                        android:layout_alignParentStart="true"
+                        android:id="@+id/textView8"
+                        android:layout_weight="1"
+                        android:paddingLeft="15dp"
+                        android:textColor="#444444"/>
+
+                    <TextView
+                        android:text="Loading. . ."
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/nco"
+                        android:layout_weight="1"
+                        android:textColor="#444444"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:text="Bring 3822 and SPORTS KIT to ALL parades.  To qualify for flying and camps, all cadets must now have 60% attendance 3 months prior to the date of activity. \n\nLeave requests must be booked through the website or leave request form. Failure to do so may result in you being marked as AWOL. \n\nRequests for new uniform should be posted in the post box via the uniform request slips."
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/linearLayout"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/textView3"
+                    android:textAlignment="viewStart"
+                    android:paddingLeft="10dp"
+                    android:textColor="#444444"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="30dp"
+                    android:textStyle="normal|italic" />
+
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>
