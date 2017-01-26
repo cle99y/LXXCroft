@@ -7,12 +7,20 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
 
 /**
  * Created by cle99 on 25/01/2017.
@@ -20,19 +28,27 @@ import java.util.regex.Pattern;
 
 public class AttemptUpdate extends AsyncTask<Void, Void, Void> {
 
-    SharedPreferences sp;
-
+    private final SharedPreferences sp;
     SharedPreferences.Editor editor;
-    static int var = 0;
+    private final Context context;
+    private ArrayList<String> paradeDetails = new ArrayList<>();
+    private JSONArray jsonArray;
+    private JSONObject obj;
+
     String[] sArray;
-    String obj;
-    Context appContext;
 
-    public AttemptUpdate() {
 
-        appContext = ParadeDetails.getContextOfApplication();
-        if (appContext == null) {Log.i("context", "NULL");}
-        sp = PreferenceManager.getDefaultSharedPreferences(appContext);
+
+    public AttemptUpdate(Context context) {
+
+        this.context = context;
+        sp = context.getSharedPreferences("LXX", Context.MODE_PRIVATE);
+        editor = sp.edit();
+
+
+
+
+
         editor = sp.edit();
 
     }
@@ -63,29 +79,52 @@ public class AttemptUpdate extends AsyncTask<Void, Void, Void> {
         try {
 
             Document d = Jsoup.connect("http://www.lxxsquadron.com/cadets-staff/details-for-next-parade").get();
-            html = d.text();
-            Log.i("HTML", html);
+            Element table = d.select("table").get(0);
+            Elements rows = table.select("tr");
+            Log.i("SIZE OF ROW", String.valueOf(rows.size()));
 
-            date = splitText(html, "Next Parade Date: (.*?)Typhoon"); Log.i("DATE", date);
+            Boolean test = false;
+
+            for (int i = 0; i < paradeDetails.size(); i++) {
+                Element row = rows.get(i);
+                Elements cells = row.select("td");
+
+
+
+                    System.out.println(cells.get(0).toString());
+                    Log.i("TITLES", cells.get(0).toString());
+                    System.out.println(cells.get(1).toString());
+
+
+            }
+            Log.i("SIZE", String.valueOf(paradeDetails.size()));
+            //obj = new JSONObject();
+
+            //jsonArray = new JSONArray(paradeDetails);
+
+            html = d.text();
+
+
+            date = splitText(html, "Next Parade Date: (.*?)Typhoon"); //Log.i("DATE", date);
             editor.putString("pdate", date);
 
-            typhoon = splitText(html, "Typhoon Flight: (.*?)Tornado"); Log.i("TYPHOON", typhoon);
+            typhoon = splitText(html, "Typhoon Flight: (.*?)Tornado"); //Log.i("TYPHOON", typhoon);
             editor.putString("typhoon", typhoon);
 
-            tornado = splitText(html, "Tornado Flight: (.*?)Hawk"); Log.i("TORNADO", tornado);
+            tornado = splitText(html, "Tornado Flight: (.*?)Hawk"); //Log.i("TORNADO", tornado);
             editor.putString("tornado", tornado);
 
-            hawk = splitText(html, "Hawk Flight: (.*?)Tucano"); Log.i("HAWK", hawk);
+            hawk = splitText(html, "Hawk Flight: (.*?)Tucano"); //Log.i("HAWK", hawk);
             editor.putString("hawk", hawk);
 
-            tucano = splitText(html, "Tucano Flight: (.*?)Duty"); Log.i("TUCANO", tucano);
+            tucano = splitText(html, "Tucano Flight: (.*?)Duty"); //Log.i("TUCANO", tucano);
             editor.putString("tucano", tucano);
 
-            nco = splitText(html, "Duty NCO: (.*?)Other"); Log.i("NCO", nco);
+            nco = splitText(html, "Duty NCO: (.*?)Other"); //Log.i("NCO", nco);
             editor.putString("nco", nco);
 
             if (editor.commit()) {
-                Log.i("SharedPref", sp.getString("nco", "bollocks"));
+                //Log.i("SharedPref", sp.getString("nco", "bollocks"));
             }
 
 
@@ -93,6 +132,7 @@ public class AttemptUpdate extends AsyncTask<Void, Void, Void> {
         } catch (IOException e) {
 
             e.printStackTrace();
+
 
         }
 

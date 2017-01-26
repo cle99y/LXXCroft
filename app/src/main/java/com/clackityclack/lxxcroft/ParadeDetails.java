@@ -8,27 +8,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +31,8 @@ public class ParadeDetails extends Fragment {
     private SharedPreferences.Editor editor;
     private TextView welcome;
     private String welcomeText, rank, fName, lName;
+    private int oneHour = 3600000;
+    private int delay, delay2;
 
     public static ParadeDetails newInstance() {
 
@@ -57,11 +48,7 @@ public class ParadeDetails extends Fragment {
     Matcher m;
     Pattern p;
     Activity activity;
-    public static Context contextOfApplication;
 
-    public static Context getContextOfApplication() {
-        return contextOfApplication;
-    }
 
     public String splitText (String s, String r) {
 
@@ -124,27 +111,50 @@ public class ParadeDetails extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        sp = getActivity().getPreferences(Context.MODE_PRIVATE);
+        sp = getActivity().getSharedPreferences("LXX", Context.MODE_PRIVATE);
         editor = sp.edit();
         activity = getActivity();
-        contextOfApplication = getContext();
-
 
         welcomeText = "";
         View v = inflater.inflate(R.layout.parade_details, container, false);
         welcome = (TextView) v.findViewById(R.id.welcome);
-        if (!sp.getString("firstName", "empty").equals("empty")) {
+        Log.i("isEmpty", sp.getString("firstName", "empty"));
+        //if (!sp.getString("firstName", "empty").equals("empty")) {
+            //welcome.setVisibility(View.VISIBLE);
 
-            rank = sp.getString("rank", "empty");
-            fName = sp.getString("firstName", "empty");
-            lName = sp.getString("lastName", "empty");
-            welcomeText = "Welcome back " + rank + " " + fName + " " + lName;
-            if (welcomeText != "") {
-                welcome.setVisibility(View.VISIBLE);
-            }
-        }
 
-        welcome.setText(welcomeText);
+            delay = 5000;
+            new Timer().scheduleAtFixedRate(new TimerTask() {
+
+                @Override
+                public void run() {
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Log.i("DELAY", String.valueOf(delay));
+
+                            rank = sp.getString("rank", "empty");
+                            fName = sp.getString("firstName", "empty");
+                            lName = sp.getString("lastName", "empty");
+                            welcomeText = "Welcome back " + rank + " " + fName + " " + lName;
+                            if (!welcomeText .contains("empty")) {
+                                delay = oneHour;
+                                Log.i("WELCOME", welcomeText);
+                                welcome.setVisibility(View.VISIBLE);
+                                welcome.setText(welcomeText);
+                            } else {
+                                delay = 5000;
+                                welcome.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+                }
+            }, 0, delay);
+        //}
+
+
 
         paradeDate = (TextView) v.findViewById(R.id.date);
         typhoonFlight = (TextView) v.findViewById(R.id.typhoon);
@@ -161,7 +171,7 @@ public class ParadeDetails extends Fragment {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            new AttemptUpdate().execute();
+                            new AttemptUpdate(getContext()).execute();
 
                             date = sp.getString("pdate", "Not bloody defined");
                             paradeDate.setText(date);
