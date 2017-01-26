@@ -1,5 +1,6 @@
 package com.clackityclack.lxxcroft;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,10 +52,16 @@ public class ParadeDetails extends Fragment {
         return f;
     }
 
-    String html;
+    String html, date, typhoon, tornado, hawk, tucano, nco;
     TextView paradeDate, typhoonFlight, tornadoFlight, hawkFlight, tucanoFlight, dutyNCO;
     Matcher m;
     Pattern p;
+    Activity activity;
+    public static Context contextOfApplication;
+
+    public static Context getContextOfApplication() {
+        return contextOfApplication;
+    }
 
     public String splitText (String s, String r) {
 
@@ -69,7 +78,7 @@ public class ParadeDetails extends Fragment {
 
     public class GetWebData extends AsyncTask<Void, Void, Void> {
 
-        private String date, typhoon, tornado, hawk, tucano, nco;
+        //private String date, typhoon, tornado, hawk, tucano, nco;
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -111,12 +120,14 @@ public class ParadeDetails extends Fragment {
         }
     }
 
-    WebView wvH, wvB ;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         sp = getActivity().getPreferences(Context.MODE_PRIVATE);
         editor = sp.edit();
+        activity = getActivity();
+        contextOfApplication = getContext();
 
 
         welcomeText = "";
@@ -141,7 +152,48 @@ public class ParadeDetails extends Fragment {
         hawkFlight = (TextView) v.findViewById(R.id.hawk);
         tucanoFlight = (TextView) v.findViewById(R.id.tucano);
         dutyNCO = (TextView) v.findViewById(R.id.nco);
-        new GetWebData().execute();
+
+        if (InternetTest.testConnection(getContext())) {
+
+            new Timer().scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new AttemptUpdate().execute();
+
+                            date = sp.getString("pdate", "Not bloody defined");
+                            paradeDate.setText(date);
+
+                            typhoon = sp.getString("typhoon", "Not defined");
+                            typhoonFlight.setText(typhoon);
+
+                            tornado = sp.getString("tornado", "Not defined");
+                            tornadoFlight.setText(hawk);
+
+                            hawk = sp.getString("hawk", "Not defined");
+                            hawkFlight.setText(hawk);
+
+                            tucano = sp.getString("tucano", "Not defined");
+                            tucanoFlight.setText(tucano);
+
+                            nco = sp.getString("nco", "Not defined");
+                            dutyNCO.setText(nco);
+
+                        }
+                    });
+                }
+            }, 0, 5000);
+
+        } else {
+            paradeDate.setText("No internet connection");
+            typhoonFlight.setText("No internet connection");
+            tornadoFlight.setText("No internet connection");
+            hawkFlight.setText("No internet connection");
+            tucanoFlight.setText("No internet connection");
+            dutyNCO.setText("No internet connection");
+        }
 
 
         return v;

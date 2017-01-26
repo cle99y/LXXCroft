@@ -228,7 +228,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:text="Bring 3822 and SPORTS KIT to ALL parades.  To qualify for flying and camps, all cadets must now have 60% attendance 3 months prior to the date of activity. \n\nLeave requests must be booked through the website or leave request form. Failure to do so may result in you being marked as AWOL. \n\nRequests for new uniform should be posted in the post box via the uniform request slips."
+                    android:text="Bring 3822 and SPORTS KIT to ALL parades.  To qualify for flying and camps, all cadets must now have 60% attendance in the three months prior to the date of activity. \n\nLeave requests must be booked through the website or leave request form. Failure to do so may result in you being marked as AWOL. \n\nRequests for new uniform should be posted in the post box via the uniform request slips."
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/linearLayout"
@@ -239,7 +239,8 @@
                     android:textColor="#444444"
                     android:paddingTop="20dp"
                     android:paddingBottom="30dp"
-                    android:textStyle="normal|italic" />
+                    android:textStyle="normal|italic"
+                    android:layout_marginRight="10dp" />
 
 
 
