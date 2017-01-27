@@ -8,14 +8,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -27,12 +32,46 @@ import java.util.regex.Pattern;
 
 public class ParadeDetails extends Fragment {
 
-    private SharedPreferences sp;
-    private SharedPreferences.Editor editor;
+    private SharedPreferences paradeInfo, userData;
+    private SharedPreferences.Editor paradeEditor;
+    private SharedPreferences.Editor userEditor;
     private TextView welcome;
-    private String welcomeText, rank, fName, lName;
+    private String welcomeText, rank, fName, lName, paradeJSON;
     private int oneHour = 3600000;
     private int delay, delay2;
+    private Gson gson = new Gson();
+    private ParadeDetail pd;
+    private ArrayList<ParadeDetail> nextParade;
+    private ParadeListViewAdapter listViewAdapter;
+    private ListView pListView;
+
+    SharedPreferences.OnSharedPreferenceChangeListener userListener , paradeListener;
+
+    public ArrayList<ParadeDetail> getFromJSON(String json) {
+
+        gson = new Gson();
+        ArrayList<ParadeDetail> list = gson.fromJson(json, ArrayList.class);
+
+        return list;
+
+    }
+
+    private void setWelcomeMessage(SharedPreferences sp) {
+
+        rank = sp.getString("rank", "empty");
+        fName = sp.getString("firstName", "empty");
+        lName = sp.getString("lastName", "empty");
+        welcomeText = "Welcome " + rank + " " + fName + " " + lName;
+        if (!welcomeText.contains("empty")) {
+            // if user exists, bring welcome text into view
+            welcome.setVisibility(View.VISIBLE);
+            welcome.setText(welcomeText);
+        } else {
+            // hide message if no user
+            welcome.setVisibility(View.GONE);
+        }
+    }
+
 
     public static ParadeDetails newInstance() {
 
@@ -50,118 +89,45 @@ public class ParadeDetails extends Fragment {
     Activity activity;
 
 
-    public String splitText (String s, String r) {
-
-        p = Pattern.compile(r);
-        m = p.matcher(s);
-
-        if (m.find()) {
-            return m.group(1);
-        } else {
-            return "Data unavailable!";
-        }
-
-    }
-
-    public class GetWebData extends AsyncTask<Void, Void, Void> {
-
-        //private String date, typhoon, tornado, hawk, tucano, nco;
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            try {
-
-                Document d = Jsoup.connect("http://www.lxxsquadron.com/cadets-staff/details-for-next-parade").get();
-                html = d.text();
-                Log.i("HTML", html);
-
-                date = splitText(html, "Next Parade Date: (.*?)Typhoon"); Log.i("DATE", date);
-                typhoon = splitText(html, "Typhoon Flight: (.*?)Tornado"); Log.i("TYPHOON", typhoon);
-                tornado = splitText(html, "Tornado Flight: (.*?)Hawk"); Log.i("TORNADO", tornado);
-                hawk = splitText(html, "Hawk Flight: (.*?)Tucano"); Log.i("HAWK", hawk);
-                tucano = splitText(html, "Tucano Flight: (.*?)Duty"); Log.i("TUCANO", tucano);
-                nco = splitText(html, "Duty NCO: (.*?)Other"); Log.i("NCO", nco);
-                Log.i("text", typhoon);
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            paradeDate.setText(date);
-            typhoonFlight.setText(typhoon);
-            tornadoFlight.setText(tornado);
-            hawkFlight.setText(hawk);
-            tucanoFlight.setText(tucano);
-            dutyNCO.setText(nco);
-
-        }
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        sp = getActivity().getSharedPreferences("LXX", Context.MODE_PRIVATE);
-        editor = sp.edit();
+        paradeInfo = getActivity().getSharedPreferences("LXXparade", Context.MODE_PRIVATE);
+        paradeEditor = paradeInfo.edit();
+
+
+        userData = getActivity().getSharedPreferences("LXXuser", Context.MODE_PRIVATE);
+        userEditor = userData.edit();
+
         activity = getActivity();
 
         welcomeText = "";
         View v = inflater.inflate(R.layout.parade_details, container, false);
         welcome = (TextView) v.findViewById(R.id.welcome);
-        Log.i("isEmpty", sp.getString("firstName", "empty"));
-        //if (!sp.getString("firstName", "empty").equals("empty")) {
+
+        pListView = (ListView) v.findViewById(R.id.pListView);
+
+        if (!userData.getString("firstName", "empty").equals("empty")) {
+            setWelcomeMessage(userData);
+        }
+
+
+        //if (!paradeInfo.getString("firstName", "empty").equals("empty")) {
             //welcome.setVisibility(View.VISIBLE);
 
+        userListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sp, String key) {
 
-            delay = 5000;
-            new Timer().scheduleAtFixedRate(new TimerTask() {
+                /* this listener updates the welcome message when the user enters or updates
+                   the USER INFO tab.
+                */
+                setWelcomeMessage(sp);
 
-                @Override
-                public void run() {
+            }
 
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            Log.i("DELAY", String.valueOf(delay));
-
-                            rank = sp.getString("rank", "empty");
-                            fName = sp.getString("firstName", "empty");
-                            lName = sp.getString("lastName", "empty");
-                            welcomeText = "Welcome back " + rank + " " + fName + " " + lName;
-                            if (!welcomeText .contains("empty")) {
-                                delay = oneHour;
-                                Log.i("WELCOME", welcomeText);
-                                welcome.setVisibility(View.VISIBLE);
-                                welcome.setText(welcomeText);
-                            } else {
-                                delay = 5000;
-                                welcome.setVisibility(View.GONE);
-                            }
-                        }
-                    });
-                }
-            }, 0, delay);
-        //}
-
-
-
-        paradeDate = (TextView) v.findViewById(R.id.date);
-        typhoonFlight = (TextView) v.findViewById(R.id.typhoon);
-        tornadoFlight = (TextView) v.findViewById(R.id.tornado);
-        hawkFlight = (TextView) v.findViewById(R.id.hawk);
-        tucanoFlight = (TextView) v.findViewById(R.id.tucano);
-        dutyNCO = (TextView) v.findViewById(R.id.nco);
+        }; userData.registerOnSharedPreferenceChangeListener(userListener);
 
         if (InternetTest.testConnection(getContext())) {
 
@@ -172,42 +138,37 @@ public class ParadeDetails extends Fragment {
                         @Override
                         public void run() {
                             new AttemptUpdate(getContext()).execute();
+                            paradeJSON = paradeInfo.getString("paradeDetail", "empty");
+                            nextParade = gson.fromJson(paradeJSON,
+                                    new TypeToken<ArrayList<ParadeDetail>>(){}.getType()); // type ArrayList<ParadeDetail>
 
-                            date = sp.getString("pdate", "Not bloody defined");
-                            paradeDate.setText(date);
 
-                            typhoon = sp.getString("typhoon", "Not defined");
-                            typhoonFlight.setText(typhoon);
+                            listViewAdapter = new ParadeListViewAdapter(getContext(), nextParade);
+                            pListView.setAdapter(listViewAdapter);
+                            Utility.setListViewHeightBasedOnChildren(pListView);
 
-                            tornado = sp.getString("tornado", "Not defined");
-                            tornadoFlight.setText(hawk);
-
-                            hawk = sp.getString("hawk", "Not defined");
-                            hawkFlight.setText(hawk);
-
-                            tucano = sp.getString("tucano", "Not defined");
-                            tucanoFlight.setText(tucano);
-
-                            nco = sp.getString("nco", "Not defined");
-                            dutyNCO.setText(nco);
 
                         }
                     });
                 }
-            }, 0, 5000);
+            }, 0, oneHour);
 
         } else {
-            paradeDate.setText("No internet connection");
-            typhoonFlight.setText("No internet connection");
-            tornadoFlight.setText("No internet connection");
-            hawkFlight.setText("No internet connection");
-            tucanoFlight.setText("No internet connection");
-            dutyNCO.setText("No internet connection");
+
         }
 
+        paradeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sp, String key) {
+
+
+
+                // placeholder for future code if needed
+
+            }
+        }; paradeInfo.registerOnSharedPreferenceChangeListener(paradeListener);
 
         return v;
-
 
     }
 

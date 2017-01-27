@@ -3,13 +3,12 @@ package com.clackityclack.lxxcroft;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,48 +27,28 @@ import java.util.regex.Pattern;
 
 public class AttemptUpdate extends AsyncTask<Void, Void, Void> {
 
-    private final SharedPreferences sp;
-    SharedPreferences.Editor editor;
+    private final SharedPreferences paradeInfo;
+    private SharedPreferences.Editor paradeEditor;
     private final Context context;
-    private ArrayList<String> paradeDetails = new ArrayList<>();
+    private ArrayList<ParadeDetail> paradeDetails = new ArrayList<>();
     private JSONArray jsonArray;
-    private JSONObject obj;
-
-    String[] sArray;
+    private Gson gson;
+    private String def, req, paradeJSON;
+    private ParadeDetail pd;
 
 
 
     public AttemptUpdate(Context context) {
 
         this.context = context;
-        sp = context.getSharedPreferences("LXX", Context.MODE_PRIVATE);
-        editor = sp.edit();
-
-
-
-
-
-        editor = sp.edit();
-
+        paradeInfo = context.getSharedPreferences("LXXparade", Context.MODE_PRIVATE);
+        paradeEditor = paradeInfo.edit();
     }
 
     String html;
     TextView paradeDate, typhoonFlight, tornadoFlight, hawkFlight, tucanoFlight, dutyNCO;
     Matcher m;
     Pattern p;
-
-    public String splitText (String s, String r) {
-
-        p = Pattern.compile(r);
-        m = p.matcher(s);
-
-        if (m.find()) {
-            return m.group(1);
-        } else {
-            return "Data unavailable!";
-        }
-
-    }
 
     private String date, typhoon, tornado, hawk, tucano, nco;
 
@@ -81,58 +60,38 @@ public class AttemptUpdate extends AsyncTask<Void, Void, Void> {
             Document d = Jsoup.connect("http://www.lxxsquadron.com/cadets-staff/details-for-next-parade").get();
             Element table = d.select("table").get(0);
             Elements rows = table.select("tr");
-            Log.i("SIZE OF ROW", String.valueOf(rows.size()));
 
             Boolean test = false;
 
-            for (int i = 0; i < paradeDetails.size(); i++) {
+            for (int i = 0; i < rows.size(); i++) {
                 Element row = rows.get(i);
                 Elements cells = row.select("td");
 
+                if (cells.get(0).text().contains("Other Information") && test == false) {
+                    test = true;
+                }
 
+                if (test == false) {
 
-                    System.out.println(cells.get(0).toString());
-                    Log.i("TITLES", cells.get(0).toString());
-                    System.out.println(cells.get(1).toString());
-
+                    def = cells.get(0).text();
+                    req = cells.get(1).text();
+                    if (!def.equals("")) {
+                        // end of list
+                        paradeDetails.add(new ParadeDetail(def, req));
+                    }
+                }
 
             }
-            Log.i("SIZE", String.valueOf(paradeDetails.size()));
-            //obj = new JSONObject();
 
-            //jsonArray = new JSONArray(paradeDetails);
+            gson = new Gson();
+            paradeJSON = gson.toJson(paradeDetails);
 
-            html = d.text();
-
-
-            date = splitText(html, "Next Parade Date: (.*?)Typhoon"); //Log.i("DATE", date);
-            editor.putString("pdate", date);
-
-            typhoon = splitText(html, "Typhoon Flight: (.*?)Tornado"); //Log.i("TYPHOON", typhoon);
-            editor.putString("typhoon", typhoon);
-
-            tornado = splitText(html, "Tornado Flight: (.*?)Hawk"); //Log.i("TORNADO", tornado);
-            editor.putString("tornado", tornado);
-
-            hawk = splitText(html, "Hawk Flight: (.*?)Tucano"); //Log.i("HAWK", hawk);
-            editor.putString("hawk", hawk);
-
-            tucano = splitText(html, "Tucano Flight: (.*?)Duty"); //Log.i("TUCANO", tucano);
-            editor.putString("tucano", tucano);
-
-            nco = splitText(html, "Duty NCO: (.*?)Other"); //Log.i("NCO", nco);
-            editor.putString("nco", nco);
-
-            if (editor.commit()) {
-                //Log.i("SharedPref", sp.getString("nco", "bollocks"));
-            }
-
-
+            paradeEditor.putString("paradeDetail", paradeJSON);
+            paradeEditor.commit();
 
         } catch (IOException e) {
 
             e.printStackTrace();
-
 
         }
 
