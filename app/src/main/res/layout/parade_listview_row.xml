@@ -18,7 +18,7 @@
         android:textAllCaps="true"
         tools:textStyle="bold"
         android:textColor="@color/parade"
-        android:paddingTop="10dp" />
+        android:paddingTop="15dp" />
 
     <TextView
         android:text="TextView"
@@ -29,4 +29,11 @@
         android:layout_marginLeft="10dp"
         android:gravity="center"
         android:paddingBottom="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/textView4"
+        android:layout_weight="1"
+        android:background="@color/background"
+        android:layout_height="10dp" />
 </LinearLayout>

@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">LXX Squadron</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="last_name">Last Name</string>
+    <string name="first_name">First Name</string>
+    <string name="spinner_prompt">Select Rank</string>
+    <string name="user_blurb">The information provided below will be used for leave requests submitted through this app. Enter an email address to receive a copy of submitted leave requests. Information only needs submitting once but can be modified at any time.</string>
+
+    <string-array name="rank_array">
+        <item></item>
+        <item>Select Rank</item>
+        <item>Cadet</item>
+        <item>Corporal</item>
+        <item>Sergeant</item>
+        <item>Flight Sergeant</item>
+        <item>Cadet Warrant Officer</item>
+        <item>Select Rank</item>
+    </string-array>
+
+</resources>

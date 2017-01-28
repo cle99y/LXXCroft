@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragParade"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/raf_blue">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/two"
+        android:id="@+id/leave_image" />
+
+    <TextView
+        android:text="Leave Request Form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/leave_image"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/leave_title"
+        android:textSize="24sp"
+        android:textColor="@color/raf_gold"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/leave_title"
+        android:isScrollContainer="false">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/leave_title"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:weightSum="1">
+
+            <TextView
+                android:text="Select start and end dates for the requested leave and provide reason for absence..  All fields are required to submit the request from this app."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/leave_title"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/textView3"
+                android:textColor="@color/raf_grey"
+                android:layout_marginBottom="10dp" />
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:inputType="date"
+                    android:ems="10"
+                    android:id="@+id/dateFrom"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/raf_grey"
+                    android:hint="Start date"
+                    android:paddingLeft="5dp"
+                    android:textColor="@color/not_quite_black"
+                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:onClick="showDatePicker"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:inputType="date"
+                    android:ems="10"
+                    android:id="@+id/dateTo"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/raf_grey"
+                    android:hint="End date"
+                    android:paddingLeft="5dp"
+                    android:textColor="@color/not_quite_black"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="5dp"
+                    android:onClick="showDatePicker"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/reason"
+                android:layout_weight="0.34"
+                android:layout_marginTop="15dp"
+                android:hint="Reason for leave request"
+                android:gravity="top"
+                android:paddingLeft="5dp"
+                android:background="@color/raf_grey"
+                android:textColor="@color/not_quite_black" />
+
+            <Button
+                android:text="Submit"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/leaveSubmit"
+                android:textSize="18sp"
+                android:layout_marginTop="50dp"
+                android:background="@color/raf_gold_low_transparency"
+                android:textColor="@color/raf_blue" />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</RelativeLayout>

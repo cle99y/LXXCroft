@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.os.AsyncTask;
@@ -42,8 +43,8 @@ public class ParadeDetails extends Fragment {
     private Gson gson = new Gson();
     private ParadeDetail pd;
     private ArrayList<ParadeDetail> nextParade;
-    private ParadeListViewAdapter listViewAdapter;
-    private ListView pListView;
+    private LinearLayout nextParadeLayout;
+
 
     SharedPreferences.OnSharedPreferenceChangeListener userListener , paradeListener;
 
@@ -106,8 +107,6 @@ public class ParadeDetails extends Fragment {
         View v = inflater.inflate(R.layout.parade_details, container, false);
         welcome = (TextView) v.findViewById(R.id.welcome);
 
-        pListView = (ListView) v.findViewById(R.id.pListView);
-
         if (!userData.getString("firstName", "empty").equals("empty")) {
             setWelcomeMessage(userData);
         }
@@ -129,6 +128,10 @@ public class ParadeDetails extends Fragment {
 
         }; userData.registerOnSharedPreferenceChangeListener(userListener);
 
+        nextParadeLayout = (LinearLayout) v.findViewById(R.id.the_parade_details_from_website);
+
+        new AttemptUpdate(getContext()).execute();
+
         if (InternetTest.testConnection(getContext())) {
 
             new Timer().scheduleAtFixedRate(new TimerTask() {
@@ -139,19 +142,33 @@ public class ParadeDetails extends Fragment {
                         public void run() {
                             new AttemptUpdate(getContext()).execute();
                             paradeJSON = paradeInfo.getString("paradeDetail", "empty");
-                            nextParade = gson.fromJson(paradeJSON,
-                                    new TypeToken<ArrayList<ParadeDetail>>(){}.getType()); // type ArrayList<ParadeDetail>
+                            if (!paradeJSON.equals("empty")) {
+                                nextParade = gson.fromJson(paradeJSON,
+                                        new TypeToken<ArrayList<ParadeDetail>>() {
+                                        }.getType()); // type ArrayList<ParadeDetail>
 
 
-                            listViewAdapter = new ParadeListViewAdapter(getContext(), nextParade);
-                            pListView.setAdapter(listViewAdapter);
-                            Utility.setListViewHeightBasedOnChildren(pListView);
+                                LayoutInflater rowInfalter = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                rowInfalter = LayoutInflater.from(getContext());
+
+                                for (int i = 0; i < nextParade.size(); i++) {
+                                    Log.i("DEF", nextParade.get(i).getDef());
+                                    Log.i("REQ", nextParade.get(i).getReq());
+
+                                    View vRow = rowInfalter.inflate(R.layout.parade_listview_row, null);
+                                    ((TextView) vRow.findViewById(R.id.definition))
+                                            .setText(nextParade.get(i).getDef());
+                                    ((TextView) vRow.findViewById(R.id.requirement))
+                                            .setText(nextParade.get(i).getReq());
+                                    nextParadeLayout.addView(vRow);
+                                }
+                            }
 
 
                         }
                     });
                 }
-            }, 0, oneHour);
+            }, 5000, oneHour);
 
         } else {
 
