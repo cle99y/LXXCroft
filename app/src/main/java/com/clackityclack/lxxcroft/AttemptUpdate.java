@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -57,41 +58,56 @@ public class AttemptUpdate extends AsyncTask<Void, Void, Void> {
 
         try {
 
-            Document d = Jsoup.connect("http://www.lxxsquadron.com/cadets-staff/details-for-next-parade").get();
-            Element table = d.select("table").get(0);
-            Elements rows = table.select("tr");
+            //Document d = Jsoup.connect("http://www.lxxsquadron.com/cadets-staff/details-for-next-parade").get();
+            Connection c = Jsoup.connect("http://www.lxxsquadron.com/cadets-staff/details-for-next-parade");
 
-            Boolean test = false;
+            Connection.Response resp = c.execute();
+            Document d; Log.i("resp", resp.statusMessage());
 
-            for (int i = 0; i < rows.size(); i++) {
-                Element row = rows.get(i);
-                Elements cells = row.select("td");
+            if (resp.statusCode() == 200) {
+                d = c.get();
+                Element table = d.select("table").get(0);
+                Elements rows = table.select("tr");
 
-                if (cells.get(0).text().contains("Other Information") && test == false) {
-                    test = true;
-                }
+                Boolean test = false;
 
-                if (test == false) {
+                for (int i = 0; i < rows.size(); i++) {
+                    Element row = rows.get(i);
+                    Elements cells = row.select("td");
 
-                    def = cells.get(0).text();
-                    req = cells.get(1).text();
-                    if (!def.equals("")) {
-                        // end of list
-                        paradeDetails.add(new ParadeDetail(def, req));
+                    if (cells.get(0).text().contains("Other Information") && test == false) {
+                        test = true;
                     }
+
+                    if (test == false) {
+
+                        def = cells.get(0).text();
+                        req = cells.get(1).text();
+                        if (!def.equals("")) {
+                            // end of list
+                            paradeDetails.add(new ParadeDetail(def, req));
+                        }
+                    }
+
                 }
+
+                gson = new Gson();
+                paradeJSON = gson.toJson(paradeDetails);
+
+                paradeEditor.putString("paradeDetail", paradeJSON);
+                paradeEditor.commit();
+
+            } else {
+
+                paradeEditor.putString("paradeDetail", "empty");
 
             }
 
-            gson = new Gson();
-            paradeJSON = gson.toJson(paradeDetails);
-
-            paradeEditor.putString("paradeDetail", paradeJSON);
-            paradeEditor.commit();
 
         } catch (IOException e) {
 
             e.printStackTrace();
+            paradeEditor.putString("paradeDetail", "empty");
 
         }
 

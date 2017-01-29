@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -44,6 +45,8 @@ public class ParadeDetails extends Fragment {
     private ParadeDetail pd;
     private ArrayList<ParadeDetail> nextParade;
     private LinearLayout nextParadeLayout;
+    private View vRow, vRowDefault;
+    private LayoutInflater rowInfalter;
 
 
     SharedPreferences.OnSharedPreferenceChangeListener userListener , paradeListener;
@@ -132,6 +135,16 @@ public class ParadeDetails extends Fragment {
 
         new AttemptUpdate(getContext()).execute();
 
+        rowInfalter = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        rowInfalter = LayoutInflater.from(getContext());
+
+        vRowDefault = rowInfalter.inflate(R.layout.parade_listview_row_if_no_http, null);
+        ((TextView) vRowDefault.findViewById(R.id.noDataTop))
+                .setText("Information for the next parade is not available");
+        ((TextView) vRowDefault.findViewById(R.id.noDataBottom))
+                .setText("Please check back regularly");
+        nextParadeLayout.addView(vRowDefault);
+
         if (InternetTest.testConnection(getContext())) {
 
             new Timer().scheduleAtFixedRate(new TimerTask() {
@@ -140,37 +153,52 @@ public class ParadeDetails extends Fragment {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            new AttemptUpdate(getContext()).execute();
-                            paradeJSON = paradeInfo.getString("paradeDetail", "empty");
-                            if (!paradeJSON.equals("empty")) {
-                                nextParade = gson.fromJson(paradeJSON,
-                                        new TypeToken<ArrayList<ParadeDetail>>() {
-                                        }.getType()); // type ArrayList<ParadeDetail>
+
+                            try {
 
 
-                                LayoutInflater rowInfalter = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                rowInfalter = LayoutInflater.from(getContext());
+                                new AttemptUpdate(getContext()).execute();
+                                paradeJSON = paradeInfo.getString("paradeDetail", "empty");
+                                if (!paradeJSON.equals("empty")) {
+                                    vRowDefault.setVisibility(View.GONE);
+                                    nextParade = gson.fromJson(paradeJSON,
+                                            new TypeToken<ArrayList<ParadeDetail>>() {
+                                            }.getType()); // type ArrayList<ParadeDetail>
 
-                                for (int i = 0; i < nextParade.size(); i++) {
-                                    Log.i("DEF", nextParade.get(i).getDef());
-                                    Log.i("REQ", nextParade.get(i).getReq());
 
-                                    View vRow = rowInfalter.inflate(R.layout.parade_listview_row, null);
-                                    ((TextView) vRow.findViewById(R.id.definition))
-                                            .setText(nextParade.get(i).getDef());
-                                    ((TextView) vRow.findViewById(R.id.requirement))
-                                            .setText(nextParade.get(i).getReq());
-                                    nextParadeLayout.addView(vRow);
+
+
+                                    Log.i("paradedetail", paradeJSON);
+                                    if (!paradeJSON.equals("empty")) {
+
+                                        for (int i = 0; i < nextParade.size(); i++) {
+                                            Log.i("DEF", nextParade.get(i).getDef());
+                                            Log.i("REQ", nextParade.get(i).getReq());
+
+                                            vRow = rowInfalter.inflate(R.layout.parade_listview_row, null);
+                                            ((TextView) vRow.findViewById(R.id.definition))
+                                                    .setText(nextParade.get(i).getDef());
+                                            ((TextView) vRow.findViewById(R.id.requirement))
+                                                    .setText(nextParade.get(i).getReq());
+                                            nextParadeLayout.addView(vRow);
+                                        }
+                                    }
                                 }
-                            }
 
+                            } catch (Exception e) {
+
+                                e.printStackTrace();
+
+                            }
 
                         }
                     });
                 }
-            }, 5000, oneHour);
+            }, 5000, 10000);
 
         } else {
+
+            Toast.makeText(getContext(),"Network Connection not detected", Toast.LENGTH_LONG).show();
 
         }
 

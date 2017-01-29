@@ -36,9 +36,7 @@ public class DateSelector extends DialogFragment implements DatePickerDialog.OnD
 
     public void onDateSet(DatePicker view, int year, int month, int day){
 
-        Log.i("date",Integer.toString(year));
-        Log.i("date",Integer.toString(month+1));
-        Log.i("date",Integer.toString(day));
+
         date = year + "/" + month + "/" + day;
 
     }

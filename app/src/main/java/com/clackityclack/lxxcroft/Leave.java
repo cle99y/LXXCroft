@@ -297,7 +297,7 @@ _multipart.addBodyPart(messageBodyPart);
 
         m = new Mail("lxxleaverequest@gmail.com", "meet in the horseshoe");
 
-        String[] emailAddressList = {"chilemerlot@gmail.com", "paulcle99@gmail.com", email};
+        String[] emailAddressList = {"adj.70@aircadets.org", "oc.70@aircadets.org", email};
         String[] toArr = contactsToArray(rank, emailAddressList);
 
         m.setTo(toArr);

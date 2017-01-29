@@ -6,9 +6,10 @@
     <color name="raf_grey">#b0c3d1</color>
     <color name="raf_blue">#2e2b3e</color>
     <color name="raf_red">#5c1f23</color>
-    <color name="raf_gold">#fee8b9</color>
+    <color name="raf_gold">#fdd634</color>
     <color name="not_quite_black">#333333</color>
     <color name="parade">#3f76ab</color>
     <color name="background">#e8e6e7</color>
     <color name="raf_gold_low_transparency">#fee8b9</color>
+    <color name="raf_grey_2">#98bbd5</color>
 </resources>
