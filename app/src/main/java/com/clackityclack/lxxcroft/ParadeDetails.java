@@ -9,19 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,9 +38,11 @@ public class ParadeDetails extends Fragment {
     private Gson gson = new Gson();
     private ParadeDetail pd;
     private ArrayList<ParadeDetail> nextParade;
-    private LinearLayout nextParadeLayout;
+    private LinearLayout nextParadeLayout, nextParadeNoInfo;
     private View vRow, vRowDefault;
-    private LayoutInflater rowInfalter;
+    private LayoutInflater rowInflater;
+    private Boolean paradeDataIsOutOfDate;
+
 
 
     SharedPreferences.OnSharedPreferenceChangeListener userListener , paradeListener;
@@ -132,18 +128,21 @@ public class ParadeDetails extends Fragment {
         }; userData.registerOnSharedPreferenceChangeListener(userListener);
 
         nextParadeLayout = (LinearLayout) v.findViewById(R.id.the_parade_details_from_website);
+        nextParadeNoInfo = (LinearLayout) v.findViewById(R.id.the_parade_details_if_no_details);
+        paradeDataIsOutOfDate = false;
 
         new AttemptUpdate(getContext()).execute();
 
-        rowInfalter = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        rowInfalter = LayoutInflater.from(getContext());
+        rowInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        rowInflater = LayoutInflater.from(getContext());
 
-        vRowDefault = rowInfalter.inflate(R.layout.parade_listview_row_if_no_http, null);
+        vRowDefault = rowInflater.inflate(R.layout.parade_listview_row_if_no_http, null);
         ((TextView) vRowDefault.findViewById(R.id.noDataTop))
                 .setText("Information for the next parade is not available");
         ((TextView) vRowDefault.findViewById(R.id.noDataBottom))
                 .setText("Please check back regularly");
-        nextParadeLayout.addView(vRowDefault);
+        nextParadeNoInfo.addView(vRowDefault);
+
 
         if (InternetTest.testConnection(getContext())) {
 
@@ -156,30 +155,38 @@ public class ParadeDetails extends Fragment {
 
                             try {
 
-
                                 new AttemptUpdate(getContext()).execute();
                                 paradeJSON = paradeInfo.getString("paradeDetail", "empty");
                                 if (!paradeJSON.equals("empty")) {
-                                    vRowDefault.setVisibility(View.GONE);
                                     nextParade = gson.fromJson(paradeJSON,
                                             new TypeToken<ArrayList<ParadeDetail>>() {
                                             }.getType()); // type ArrayList<ParadeDetail>
 
+                                    String today = DateValue.getToday();
+                                    String pDate = DateValue.formatParadeData(nextParade.get(0).getReq());
+                                    if (DateValue.getDateValue(today) > DateValue.getDateValue(pDate)) {
+                                        paradeEditor.putString("paradeDetail", "empty").commit();
+                                    }
+
+                                    Log.i("qqqqqqqqqqqqqqq", String.valueOf(nextParadeLayout.getChildCount()));
+                                    if (paradeDataIsOutOfDate == false &&
+                                            nextParadeLayout.getChildCount() == 0) {
+                                        nextParadeNoInfo.setVisibility(View.GONE);
+                                        nextParadeLayout.setVisibility(View.VISIBLE);
 
 
 
-                                    Log.i("paradedetail", paradeJSON);
-                                    if (!paradeJSON.equals("empty")) {
 
                                         for (int i = 0; i < nextParade.size(); i++) {
                                             Log.i("DEF", nextParade.get(i).getDef());
                                             Log.i("REQ", nextParade.get(i).getReq());
 
-                                            vRow = rowInfalter.inflate(R.layout.parade_listview_row, null);
+                                            vRow = rowInflater.inflate(R.layout.parade_listview_row, null);
                                             ((TextView) vRow.findViewById(R.id.definition))
                                                     .setText(nextParade.get(i).getDef());
                                             ((TextView) vRow.findViewById(R.id.requirement))
                                                     .setText(nextParade.get(i).getReq());
+
                                             nextParadeLayout.addView(vRow);
                                         }
                                     }
@@ -194,7 +201,7 @@ public class ParadeDetails extends Fragment {
                         }
                     });
                 }
-            }, 5000, 10000);
+            }, 5000, oneHour);
 
         } else {
 

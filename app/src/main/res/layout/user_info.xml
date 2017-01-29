@@ -46,7 +46,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/user_blurb"
-                android:textColor="@color/raf_grey" />
+                android:textColor="@color/raf_grey"
+                android:textSize="12sp" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -140,7 +141,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="50dp">
+                android:layout_marginTop="20dp">
 
                 <Button
                     android:text="SUBMIT"

@@ -216,17 +216,7 @@ _multipart.addBodyPart(messageBodyPart);
 
     }
 
-    public int getDateValue (String d) {    // d representing a date value dd mmm yyyy
 
-
-        String[] dSplit = d.split(" ");
-        int dVal = 0;
-        dVal += Integer.parseInt(dSplit[2]);
-        dVal *= 1 + Arrays.asList(months).indexOf(dSplit[1]);
-        dVal += Integer.parseInt(dSplit[0]);
-
-        return dVal;
-    }
 
     public void DateListener (final TextView tView) {
 
@@ -328,7 +318,8 @@ _multipart.addBodyPart(messageBodyPart);
                 } else if (d1.equals("") || d2.equals("") || excuse.equals("")) {
                     Toast.makeText(getContext(), "Please enter all fields", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (getDateValue(d1) >= getDateValue(d2)) {
+                    if (DateValue.getDateValue(d1) >= DateValue.getDateValue(d2)) {
+
                         Toast.makeText(getContext(), "Invalid date range"
                         , Toast.LENGTH_SHORT).show();
                     } else {
