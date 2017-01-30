@@ -1,7 +1,9 @@
 package com.clackityclack.lxxcroft;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -205,6 +207,20 @@ _multipart.addBodyPart(messageBodyPart);
             this._to = to;
         }
 
+        public String getTo(String[] s) {
+
+            String outStr = "To: ";
+            Log.i("SLENGTH", String.valueOf(s.length));
+
+            for (int i = 0; i < s.length; i++ ) {
+                outStr += s[i];
+                if (i < s.length - 1) {
+                    outStr += ", ";
+                }
+            }
+            return outStr;
+        }
+
         public void setFrom(String from) {
             this._from = from;
         }
@@ -287,13 +303,14 @@ _multipart.addBodyPart(messageBodyPart);
 
         m = new Mail("lxxleaverequest@gmail.com", "meet in the horseshoe");
 
-        String[] emailAddressList = {"adj.70@aircadets.org", "oc.70@aircadets.org", email};
-        String[] toArr = contactsToArray(rank, emailAddressList);
+        //String[] emailAddressList = {"adj.70@aircadets.org", "oc.70@aircadets.org", email};
+        //for debugging
+        String[] emailAddressList = {"chilemerlot@gmail.com", "paulcle99@gmail.com", email};
+        final String[] toArr = contactsToArray(rank, emailAddressList);
 
         m.setTo(toArr);
         m.setFrom("lxxleaverequest@gmail.com");
         m.setSubject("New Leave Request");
-        m.setBody("version with async task");
 
         DateListener(dateFrom);
         DateListener((dateTo));
@@ -322,54 +339,77 @@ _multipart.addBodyPart(messageBodyPart);
 
                         Toast.makeText(getContext(), "Invalid date range"
                         , Toast.LENGTH_SHORT).show();
+
                     } else {
-                        submit.setText("Sending. . .");
+
                         m.setBody("The following Leave Request has been submitted by: " +
                                 System.lineSeparator() + System.lineSeparator() +
                                 rank + " " + fName + " " + lName +
                                 System.lineSeparator() + System.lineSeparator() +
-                                "between the dates: " + d1 + " and " + d2 +
+                                "between the dates: " + System.lineSeparator() +
+                                d1 + " and " + d2 +
                                 System.lineSeparator() + System.lineSeparator() +
                                 "The reason given is as follows: " + System.lineSeparator() +
                                 System.lineSeparator() +
                                 reason.getText().toString()
                         );
 
-                        new AsyncTask<Void, Void, Void>() {
+                        new AlertDialog.Builder(getContext())
+                                .setIcon(android.R.drawable.ic_dialog_email)
+                                .setTitle("Email Preview:")
+                                .setMessage(
+                                        m.getTo(toArr) + "\n\n" +
+                                        "Subject: New Leave Request \n\n" +
+                                        m.getBody() + "\n")
 
-                            @Override
-                            protected Void doInBackground(Void... voids) {
+                                .setPositiveButton("SEND", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                        submit.setText("Sending. . .");
+                                        new AsyncTask<Void, Void, Void>() {
+
+                                            @Override
+                                            protected Void doInBackground(Void... voids) {
+
+                                                try {
+
+                                                    if (m.send()) emailSent = true;
 
 
+                                                } catch(Exception e) {
+                                                    //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
+                                                    Log.e("MailApp", "Could not send email", e);
+                                                }
 
-                                try {
-                                    if (m.send()) emailSent = true;
+                                                return null;
+                                            }
 
+                                            @Override
+                                            protected void onPostExecute(Void v) {
+                                                if (emailSent) {
+                                                    Toast.makeText(getContext(), "email sent successfully", Toast.LENGTH_LONG).show();
+                                                    submit.setText("Submit");
+                                                } else {
+                                                    Toast.makeText(getContext(), "email  not sent.", Toast.LENGTH_LONG).show();
+                                                    submit.setText("Submit");
+                                                }
+                                                dateFrom.setText(null);
+                                                dateTo.setText(null);
+                                                reason.setText(null);
 
-                                } catch(Exception e) {
-                                    //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
-                                    Log.e("MailApp", "Could not send email", e);
-                                }
+                                            }
 
-                                return null;
-                            }
+                                        }.execute();
 
-                            @Override
-                            protected void onPostExecute(Void v) {
-                                if (emailSent) {
-                                    Toast.makeText(getContext(), "email sent successfully", Toast.LENGTH_LONG).show();
-                                    submit.setText("Submit");
-                                } else {
-                                    Toast.makeText(getContext(), "email  not sent.", Toast.LENGTH_LONG).show();
-                                    submit.setText("Submit");
-                                }
-                                dateFrom.setText(null);
-                                dateTo.setText(null);
-                                reason.setText(null);
-
-                            }
-
-                        }.execute();
+                                    }
+                                })
+                                .setNegativeButton("DISMISS", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        // dismiss
+                                    }
+                                }).show();
 
                     }
 

@@ -165,10 +165,9 @@ public class ParadeDetails extends Fragment {
                                     String today = DateValue.getToday();
                                     String pDate = DateValue.formatParadeData(nextParade.get(0).getReq());
                                     if (DateValue.getDateValue(today) > DateValue.getDateValue(pDate)) {
-                                        paradeEditor.putString("paradeDetail", "empty").commit();
+                                        paradeDataIsOutOfDate = true;
                                     }
 
-                                    Log.i("qqqqqqqqqqqqqqq", String.valueOf(nextParadeLayout.getChildCount()));
                                     if (paradeDataIsOutOfDate == false &&
                                             nextParadeLayout.getChildCount() == 0) {
                                         nextParadeNoInfo.setVisibility(View.GONE);

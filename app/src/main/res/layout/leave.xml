@@ -14,34 +14,33 @@
         android:src="@drawable/two"
         android:id="@+id/leave_image" />
 
-    <TextView
-        android:text="Leave Request Form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/leave_image"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/leave_title"
-        android:textSize="24sp"
-        android:textColor="@color/raf_gold"
-        android:gravity="center"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp" />
-
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/leave_title"
+        android:layout_below="@+id/leave_image"
+
         android:isScrollContainer="false">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/leave_title"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:weightSum="1">
+
+            <TextView
+                android:text="Leave Request Form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/leave_title"
+                android:textSize="24sp"
+                android:textColor="@color/raf_gold"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp" />
 
             <TextView
                 android:text="Select start and end dates for the requested leave and provide reason for absence..  All fields are required to submit the request from this app."
