@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/raf_blue">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <TextView
+            android:text="@string/_70_squadron_n_croft_amp_culcheth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            android:gravity="center"
+            android:padding="20dp"
+            android:textSize="20sp"
+            android:textColor="@color/raf_gold"
+            android:textStyle="normal|bold" />
+
+        <TextView
+            android:text="@string/loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView6"
+            android:textColor="@color/raf_gold"
+            android:textStyle="normal|bold"
+            android:gravity="center" />
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

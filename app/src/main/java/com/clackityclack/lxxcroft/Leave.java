@@ -1,9 +1,8 @@
 package com.clackityclack.lxxcroft;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -209,13 +208,13 @@ _multipart.addBodyPart(messageBodyPart);
 
         public String getTo(String[] s) {
 
-            String outStr = "To: ";
+            String outStr = "";
             Log.i("SLENGTH", String.valueOf(s.length));
 
             for (int i = 0; i < s.length; i++ ) {
-                outStr += s[i];
+                outStr += s[i].trim();
                 if (i < s.length - 1) {
-                    outStr += ", ";
+                    outStr += ",\n";
                 }
             }
             return outStr;
@@ -353,63 +352,137 @@ _multipart.addBodyPart(messageBodyPart);
                                 System.lineSeparator() +
                                 reason.getText().toString()
                         );
+                        String getBody = m.getBody();
 
-                        new AlertDialog.Builder(getContext())
-                                .setIcon(android.R.drawable.ic_dialog_email)
-                                .setTitle("Email Preview:")
-                                .setMessage(
-                                        m.getTo(toArr) + "\n\n" +
-                                        "Subject: New Leave Request \n\n" +
-                                        m.getBody() + "\n")
+                        final Dialog dialog = new Dialog(getContext());
+                        dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+                        dialog.setContentView(R.layout.email_preview);
 
-                                .setPositiveButton("SEND", new DialogInterface.OnClickListener() {
+                        TextView e = (TextView) dialog.findViewById(R.id.address);
+                        e.setText(m.getTo(toArr));
+                        TextView s = (TextView) dialog.findViewById(R.id.subject_line);
+                        s.setText("New Leave Request");
+                        TextView b = (TextView) dialog.findViewById(R.id.body);
+                        b.setText(getBody);
+
+                        Button dismiss = (Button) dialog.findViewById(R.id.dismiss);
+
+                        // if button is clicked, close the custom dialog
+
+                        dismiss.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+
+                            public void onClick(View v) {
+
+                                dialog.dismiss();
+
+                            }
+
+                        });
+
+                        Button send = (Button) dialog.findViewById(R.id.send);
+
+                        // if button is clicked, run the send email script
+
+                        send.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+
+                            public void onClick(View v) {
+
+                                dialog.dismiss();
+                                submit.setText("Sending. . .");
+                                new AsyncTask<Void, Void, Void>() {
+
                                     @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                    protected Void doInBackground(Void... voids) {
 
-                                        submit.setText("Sending. . .");
-                                        new AsyncTask<Void, Void, Void>() {
+                                        try {
 
-                                            @Override
-                                            protected Void doInBackground(Void... voids) {
-
-                                                try {
-
-                                                    if (m.send()) emailSent = true;
+                                            if (m.send()) emailSent = true;
 
 
-                                                } catch(Exception e) {
-                                                    //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
-                                                    Log.e("MailApp", "Could not send email", e);
-                                                }
+                                        } catch(Exception e) {
+                                            //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
+                                            Log.e("MailApp", "Could not send email", e);
+                                        }
 
-                                                return null;
-                                            }
+                                        return null;
+                                    }
 
-                                            @Override
-                                            protected void onPostExecute(Void v) {
-                                                if (emailSent) {
-                                                    Toast.makeText(getContext(), "email sent successfully", Toast.LENGTH_LONG).show();
-                                                    submit.setText("Submit");
-                                                } else {
-                                                    Toast.makeText(getContext(), "email  not sent.", Toast.LENGTH_LONG).show();
-                                                    submit.setText("Submit");
-                                                }
-                                                dateFrom.setText(null);
-                                                dateTo.setText(null);
-                                                reason.setText(null);
-
-                                            }
-
-                                        }.execute();
+                                    @Override
+                                    protected void onPostExecute(Void v) {
+                                        if (emailSent) {
+                                            Toast.makeText(getContext(), "email sent successfully", Toast.LENGTH_LONG).show();
+                                            submit.setText("Submit");
+                                        } else {
+                                            Toast.makeText(getContext(), "email  not sent.", Toast.LENGTH_LONG).show();
+                                            submit.setText("Submit");
+                                        }
+                                        dateFrom.setText(null);
+                                        dateTo.setText(null);
+                                        reason.setText(null);
 
                                     }
-                                })
-                                .setNegativeButton("DISMISS", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        // dismiss
-                                    }
-                                }).show();
+
+                                }.execute();
+
+                            }
+
+                        });
+
+                        dialog.show();
+
+
+//                                .setPositiveButton("SEND", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                                        submit.setText("Sending. . .");
+//                                        new AsyncTask<Void, Void, Void>() {
+//
+//                                            @Override
+//                                            protected Void doInBackground(Void... voids) {
+//
+//                                                try {
+//
+//                                                    if (m.send()) emailSent = true;
+//
+//
+//                                                } catch(Exception e) {
+//                                                    //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
+//                                                    Log.e("MailApp", "Could not send email", e);
+//                                                }
+//
+//                                                return null;
+//                                            }
+//
+//                                            @Override
+//                                            protected void onPostExecute(Void v) {
+//                                                if (emailSent) {
+//                                                    Toast.makeText(getContext(), "email sent successfully", Toast.LENGTH_LONG).show();
+//                                                    submit.setText("Submit");
+//                                                } else {
+//                                                    Toast.makeText(getContext(), "email  not sent.", Toast.LENGTH_LONG).show();
+//                                                    submit.setText("Submit");
+//                                                }
+//                                                dateFrom.setText(null);
+//                                                dateTo.setText(null);
+//                                                reason.setText(null);
+//
+//                                            }
+//
+//                                        }.execute();
+//
+//                                    }
+//                                })
+//                                .setNegativeButton("DISMISS", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialogInterface, int i) {
+//                                        // dismiss
+//                                    }
+//                                }).show();
 
                     }
 
