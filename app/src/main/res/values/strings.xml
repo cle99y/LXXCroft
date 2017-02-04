@@ -7,7 +7,7 @@
     <string name="spinner_prompt">Select Rank</string>
     <string name="user_blurb">The information provided below will be used for leave requests submitted through this app. Enter an email address to receive a copy of submitted leave requests. Information only needs submitting once but can be modified at any time.</string>
     <string name="loading">Loading. . . .</string>
-    <string name="_70_squadron_n_croft_amp_culcheth"><![CDATA[70 Squadron\n(Croft & Culcheth)]]></string>
+    <string name="_70_squadron_n_croft_amp_culcheth"><![CDATA[70 (Croft & Culcheth)\nSquadron]]></string>
 
     <string-array name="rank_array">
         <item></item>

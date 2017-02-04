@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 /**
@@ -11,6 +13,14 @@ import android.widget.TextView;
  */
 
 public class Splash extends Activity {
+
+    private void RunAnimation() {
+        Animation a = AnimationUtils.loadAnimation ( this, R.anim.scale );
+        a.reset ();
+        TextView tv = (TextView) findViewById ( R.id.splash );
+        tv.clearAnimation ();
+        tv.startAnimation ( a );
+    }
 
     @Override
     protected void onCreate(Bundle splashScreen) {
@@ -25,26 +35,19 @@ public class Splash extends Activity {
             float endSize = 35;
 
             public int cycle = 0;
-            TextView load = (TextView) findViewById ( R.id.loading );
+            //TextView load = (TextView) findViewById ( R.id.loading );
             TextView splash70 = (TextView) findViewById ( R.id.splash );
 
             public void run() {
                 try {
-                    while (cycle < 100) {
-                        Thread.sleep ( 25 );
-                        runOnUiThread ( new Runnable () {
-                            @Override
-                            public void run() {
-                                load.setText ( sLoad );
-                                splash70.setTextSize ( TypedValue.COMPLEX_UNIT_SP, currentSize );
-                                currentSize += (endSize - startSize) / 100;
-                                if (cycle % 20 == 0) {
-                                    sLoad += ".";
-                                }
-                                cycle += 1;
-                            }
-                        });
-                    }
+                    runOnUiThread ( new Runnable () {
+                        @Override
+                        public void run() {
+                            RunAnimation ();
+                        }
+                    });
+                    sleep ( 3000 );
+
                 } catch (InterruptedException e) {
                     e.printStackTrace ();
                 } finally {

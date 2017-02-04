@@ -7,8 +7,8 @@ android {
         applicationId "com.clackityclack.lxxcroft"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 13
-        versionName "beta.13"
+        versionCode 16
+        versionName "beta.16"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
