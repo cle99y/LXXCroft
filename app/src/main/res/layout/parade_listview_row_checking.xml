@@ -4,31 +4,31 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_marginTop="10dp"
     android:layout_marginBottom="10dp"
-    android:background="#ffffff"
+    android:background="@color/background"
     android:layout_height="wrap_content">
 
     <TextView
-        android:text="iNFORMATION FOR NEXT PARADE IS UNAVAILABLE"
+        android:text="Checking for Next parade Details"
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:id="@+id/noDataTop"
-        android:paddingLeft="10dp"
+        android:id="@+id/check_top"
         android:gravity="center"
         android:textAllCaps="true"
         tools:textStyle="bold"
         android:textColor="@color/parade"
-        android:paddingTop="15dp" />
+        android:paddingTop="15dp"
+        android:background="@drawable/rounded_corner_linear_layout_top" />
 
     <TextView
-        android:text="Please check back regularly"
+        android:text="Please wait..."
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:id="@+id/noDataBottom"
-        android:layout_marginLeft="10dp"
+        android:id="@+id/ch_bottom"
         android:gravity="center"
-        android:paddingBottom="10dp" />
+        android:paddingBottom="10dp"
+        android:background="@drawable/rounded_corner_linear_layout_bottom" />
 
     <TextView
         android:layout_width="match_parent"
@@ -36,5 +36,4 @@
         android:layout_weight="1"
         android:background="@color/background"
         android:layout_height="10dp" />
-
 </LinearLayout>

@@ -85,7 +85,7 @@ public class UserInformation extends Fragment {
 //--SPINNER-----------------------------------------------------------------------------------------
         final Spinner spinner = (Spinner) v.findViewById(R.id.rank_select);
         String [] ranks = {"Select. . .", "Cadet", "Corporal", "Sergeant",
-                "Flight Sergeant", "Cadet Warrant Officer"};
+                "Flight Sergeant", "Cadet Warrant Officer", "Staff"};
         spinner.setSelection(0);
 
         String compareText = userData.getString("rank", "empty");
@@ -145,7 +145,7 @@ public class UserInformation extends Fragment {
                     if(editor.commit()) {
                         Toast.makeText(getContext(),"User profile successfully saved",
                                 Toast.LENGTH_SHORT).show();
-                        //restartActivity(getActivity());
+
                     }
                 }
                 //Toast.makeText(getContext(),emailAddress.getText().toString(),Toast.LENGTH_SHORT).show();

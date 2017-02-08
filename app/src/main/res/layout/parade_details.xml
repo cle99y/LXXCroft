@@ -56,14 +56,31 @@
                     android:layout_marginBottom="20dp" />
 
                 <LinearLayout
+                    android:id="@+id/the_parade_details_checking"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:visibility="gone" >
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
                     android:id="@+id/the_parade_details_if_no_details"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp">
+                    android:layout_marginRight="10dp"
+                    android:clickable="true"
+                    android:visibility="gone">
 
                 </LinearLayout>
+
+
 
                 <LinearLayout
                     android:id="@+id/the_parade_details_from_website"

@@ -22,7 +22,7 @@
             android:textSize="30sp"
             android:textColor="@color/raf_red"
             android:textStyle="normal|bold"
-            android:background="@color/raf_grey"
+            android:background="@drawable/round_corners_for_text"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"/>
 

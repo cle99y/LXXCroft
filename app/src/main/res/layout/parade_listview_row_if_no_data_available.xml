@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical" android:layout_width="match_parent"
-              android:layout_marginTop="10dp"
-              android:layout_marginBottom="10dp"
-              android:background="@color/background"
-              android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:background="@color/background"
+    android:layout_height="wrap_content">
 
     <TextView
+        android:text="iNFORMATION FOR NEXT PARADE IS UNAVAILABLE"
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:id="@+id/main_top"
+        android:id="@+id/noDataTop"
         android:gravity="center"
         android:textAllCaps="true"
         tools:textStyle="bold"
         android:textColor="@color/parade"
         android:paddingTop="15dp"
-        android:text="-DEF-"
         android:background="@drawable/rounded_corner_linear_layout_top" />
 
     <TextView
+        android:text="Click to refresh"
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:id="@+id/main_bottom"
+        android:id="@+id/noDataBottom"
         android:gravity="center"
         android:paddingBottom="10dp"
-        android:text="-REQ-"
         android:background="@drawable/rounded_corner_linear_layout_bottom" />
 
     <TextView
         android:layout_width="match_parent"
-        android:id="@+id/main_blank"
+        android:id="@+id/textView4"
         android:layout_weight="1"
         android:background="@color/background"
         android:layout_height="10dp" />
+
 </LinearLayout>

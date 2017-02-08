@@ -18,9 +18,10 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/user_image"
         android:isScrollContainer="false"
-        android:id="@+id/scrollView2">>
+        android:id="@+id/scrollView2"
+        android:layout_below="@+id/user_image"
+        android:layout_alignParentStart="true">>
 
         <LinearLayout
             android:orientation="vertical"

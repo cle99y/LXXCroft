@@ -1,5 +1,6 @@
 package com.clackityclack.lxxcroft;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -44,15 +45,16 @@ public class Leave extends Fragment {
 
     SharedPreferences userData;
     SharedPreferences.Editor editor;
+    SharedPreferences.OnSharedPreferenceChangeListener userListener;
     TextView dateFrom, dateTo, reason;
-    Button submit;
+    Button submit, clear;
     Mail m;
     Boolean emailSent = false;
     String[] months = {"Jan", "Feb", "Mar", "Apr",
                                "May", "Jun", "Jul", "Aug",
                                "Sep", "Oct", "Nov", "Dec"};
 
-    String rank, fName, lName, email;
+    String rank, fName, lName, email, blank;
 
     public class Mail extends javax.mail.Authenticator {
         private String _user;
@@ -114,14 +116,6 @@ public class Leave extends Fragment {
 
 
             if(!_user.equals("") && !_pass.equals("") && _to.length > 0 && !_from.equals("") && !_subject.equals("") && !_body.equals("")) {
-                /*
-                Log.i("user", _user);
-                Log.i("pass", _pass);
-                Log.i("length", String.valueOf(_to.length));
-                Log.i("from", _from);
-                Log.i("subject", _subject);
-                Log.i("body", _body);
-                */
 
                 Session session = Session.getInstance(props, this);
 
@@ -209,7 +203,6 @@ _multipart.addBodyPart(messageBodyPart);
         public String getTo(String[] s) {
 
             String outStr = "";
-            Log.i("SLENGTH", String.valueOf(s.length));
 
             for (int i = 0; i < s.length; i++ ) {
                 outStr += s[i].trim();
@@ -238,23 +231,24 @@ _multipart.addBodyPart(messageBodyPart);
         tView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!rank.equals("Staff")) {
+                    final Calendar calendar = Calendar.getInstance();
+                    int yy = calendar.get(Calendar.YEAR);
+                    int mm = calendar.get(Calendar.MONTH);
+                    int dd = calendar.get(Calendar.DAY_OF_MONTH);
+                    DatePickerDialog datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
 
-                final Calendar calendar=Calendar.getInstance();
-                int yy = calendar.get(Calendar.YEAR);
-                int mm = calendar.get(Calendar.MONTH);
-                int dd = calendar.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            String date = String.valueOf(dayOfMonth) + " " + months[monthOfYear]
+                                    + " " + String.valueOf(year);
+                            tView.setText(date);
 
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        String date = String.valueOf(dayOfMonth) + " " + months[monthOfYear]
-                                + " " + String.valueOf(year);
-                        tView.setText(date);
+                        }
+                    }, yy, mm, dd);
 
-                    }
-                }, yy, mm, dd);
-
-                datePicker.show();
+                    datePicker.show();
+                }
             }
         });
 
@@ -282,6 +276,15 @@ _multipart.addBodyPart(messageBodyPart);
         return res;
     }
 
+    public void clearForm () {
+
+
+        Log.i("SODDING B", "");
+        dateFrom.setText("");
+        dateTo.setText("");
+        reason.setText("");
+    }
+
 
     //@RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -293,19 +296,23 @@ _multipart.addBodyPart(messageBodyPart);
         fName = userData.getString("firstName", "empty");
         lName = userData.getString("lastName", "empty");
         email = userData.getString("emailAddress", "empty");
-
+        blank = (rank.equals("Staff") ? "N/A for staff" : "");
+        Log.i("BLANK", "blank string '" + blank + "'");
         View v = inflater.inflate(R.layout.leave, container, false);
 
         dateFrom = (TextView) v.findViewById(R.id.dateFrom);
         dateTo = (TextView) v.findViewById(R.id.dateTo);
-        reason = (EditText) v.findViewById(R.id.reason);
+        reason = (TextView) v.findViewById(R.id.reason);
+        clearForm();
+
 
         m = new Mail("lxxleaverequest@gmail.com", "meet in the horseshoe");
 
-        //String[] emailAddressList = {"adj.70@aircadets.org", "oc.70@aircadets.org", email};
+        String[] emailAddressList = {"adj.70@aircadets.org", "oc.70@aircadets.org", email};
         //for debugging
-        String[] emailAddressList = {"chilemerlot@gmail.com", "paulcle99@gmail.com", email};
+        //String[] emailAddressList = {"chilemerlot@gmail.com", "paulcle99@gmail.com", email};
         final String[] toArr = contactsToArray(rank, emailAddressList);
+
 
         m.setTo(toArr);
         m.setFrom("lxxleaverequest@gmail.com");
@@ -315,14 +322,29 @@ _multipart.addBodyPart(messageBodyPart);
         DateListener((dateTo));
 
         submit = (Button) v.findViewById(R.id.leaveSubmit);
+        if (rank.equals("Staff")) {
+
+            submit.setEnabled(false);
+            reason.setFocusable(false);
+
+        }
+        clear = (Button) v.findViewById(R.id.leave_clear_data);
+        clear.performClick();
+
+
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearForm();
+
+            }
+        });
+
+
         submit.setOnClickListener(new View.OnClickListener() {
-
-
 
             @Override
             public void onClick(View view) {
-
-                Log.i("email address", email);
 
                 String d1 = dateFrom.getText().toString();
                 String d2 = dateTo.getText().toString();
@@ -405,7 +427,7 @@ _multipart.addBodyPart(messageBodyPart);
 
                                         } catch(Exception e) {
                                             //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
-                                            Log.e("MailApp", "Could not send email", e);
+
                                         }
 
                                         return null;
@@ -434,73 +456,12 @@ _multipart.addBodyPart(messageBodyPart);
 
                         dialog.show();
 
-
-//                                .setPositiveButton("SEND", new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialogInterface, int i) {
-//
-//                                        submit.setText("Sending. . .");
-//                                        new AsyncTask<Void, Void, Void>() {
-//
-//                                            @Override
-//                                            protected Void doInBackground(Void... voids) {
-//
-//                                                try {
-//
-//                                                    if (m.send()) emailSent = true;
-//
-//
-//                                                } catch(Exception e) {
-//                                                    //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
-//                                                    Log.e("MailApp", "Could not send email", e);
-//                                                }
-//
-//                                                return null;
-//                                            }
-//
-//                                            @Override
-//                                            protected void onPostExecute(Void v) {
-//                                                if (emailSent) {
-//                                                    Toast.makeText(getContext(), "email sent successfully", Toast.LENGTH_LONG).show();
-//                                                    submit.setText("Submit");
-//                                                } else {
-//                                                    Toast.makeText(getContext(), "email  not sent.", Toast.LENGTH_LONG).show();
-//                                                    submit.setText("Submit");
-//                                                }
-//                                                dateFrom.setText(null);
-//                                                dateTo.setText(null);
-//                                                reason.setText(null);
-//
-//                                            }
-//
-//                                        }.execute();
-//
-//                                    }
-//                                })
-//                                .setNegativeButton("DISMISS", new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialogInterface, int i) {
-//                                        // dismiss
-//                                    }
-//                                }).show();
-
                     }
 
                 }
 
             }
         });
-
-
-//--------------------------------------------------------------------------------------------------
-
-//        userData = getActivity().getPreferences(Context.MODE_PRIVATE);
-//        editor = userData.edit();
-//
-//        dummy.setText(userData.getString("emailAddress", "empty") + " " +
-//                      userData.getString("firstName", "empty") + " " +
-//                      userData.getString("lastName", "empty"));
-
 
         return v;
 

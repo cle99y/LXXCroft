@@ -55,9 +55,9 @@ public class DateValue {
     public static String formatParadeData (String s) {
 
         String[] longDate = s.split(" ");
-        longDate[1] = longDate[1].substring(0, 2);
+        longDate[1] = longDate[1].substring(0, longDate[1].length() - 2);
         longDate[2] = longDate[2].substring(0, 3);
-        Log.i("SUBSTR", longDate[1]);
+
 
         return longDate[1] + " " + longDate[2] + " " + longDate[3];
 
